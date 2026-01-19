@@ -52,21 +52,33 @@ const BookingPage = () => {
             // Load services
             const servicesQuery = query(collection(db, 'services'), where('active', '==', true));
             const servicesSnapshot = await getDocs(servicesQuery);
-            const servicesData = servicesSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-                icon: iconMap[doc.data().name] || <ContentCut />
-            }));
-            setServices(servicesData);
+            const servicesMap = new Map();
+            servicesSnapshot.docs.forEach(doc => {
+                const data = doc.data();
+                if (!servicesMap.has(data.name)) {
+                    servicesMap.set(data.name, {
+                        id: doc.id,
+                        ...data,
+                        icon: iconMap[data.name] || <ContentCut />
+                    });
+                }
+            });
+            setServices(Array.from(servicesMap.values()));
 
             // Load barbers
             const barbersQuery = query(collection(db, 'barbers'), where('active', '==', true));
             const barbersSnapshot = await getDocs(barbersQuery);
-            const barbersData = barbersSnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            setBarbers(barbersData);
+            const barbersMap = new Map();
+            barbersSnapshot.docs.forEach(doc => {
+                const data = doc.data();
+                if (!barbersMap.has(data.name)) {
+                    barbersMap.set(data.name, {
+                        id: doc.id,
+                        ...data
+                    });
+                }
+            });
+            setBarbers(Array.from(barbersMap.values()));
 
             setLoading(false);
         } catch (error) {
