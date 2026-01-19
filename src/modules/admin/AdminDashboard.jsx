@@ -6,12 +6,23 @@ import {
 } from '@mui/material';
 import {
     Dashboard, EventNote, ContentCut, Settings, ArrowBack,
-    TrendingUp, People
+    TrendingUp, People, Logout
 } from '@mui/icons-material';
+import { useAuth } from '@/context/AuthContext';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { logout } = useAuth();
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate('/login');
+        } catch (error) {
+            console.error("Error logging out", error);
+        }
+    };
 
     const adminSections = [
         {
@@ -43,13 +54,23 @@ const AdminDashboard = () => {
     return (
         <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 8 }}>
             <Container maxWidth="lg">
-                <Button
-                    startIcon={<ArrowBack />}
-                    onClick={() => navigate('/')}
-                    sx={{ mb: 4, color: 'primary.main', fontWeight: 600 }}
-                >
-                    Volver al Inicio
-                </Button>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
+                    <Button
+                        startIcon={<ArrowBack />}
+                        onClick={() => navigate('/')}
+                        sx={{ color: 'primary.main', fontWeight: 600 }}
+                    >
+                        Volver al Inicio
+                    </Button>
+                    <Button
+                        startIcon={<Logout />}
+                        onClick={handleLogout}
+                        color="error"
+                        sx={{ fontWeight: 600 }}
+                    >
+                        Cerrar Sesión
+                    </Button>
+                </Box>
 
                 <Box sx={{ textAlign: 'center', mb: 8 }}>
                     <Dashboard sx={{ fontSize: '4rem', color: 'primary.main', mb: 2 }} />
